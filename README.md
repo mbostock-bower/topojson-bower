@@ -11,10 +11,10 @@ Lastly, encoding topology has numerous useful applications for maps and visualiz
 
 ## Installing
 
-If you use NPM, `npm install topojson-client`. Otherwise, download the [latest release](https://github.com/topojson/topojson-client/releases/latest). You can also load directly from [d3js.org](https://d3js.org) as a [standalone library](https://d3js.org/topojson.v1.min.js). AMD, CommonJS, and vanilla environments are supported. In vanilla, a `topojson` global is exported:
+If you use NPM, `npm install topojson-client`. Otherwise, download the [latest release](https://github.com/topojson/topojson-client/releases/latest). You can also load directly from [d3js.org](https://d3js.org) as a [standalone library](https://d3js.org/topojson.v2.min.js). AMD, CommonJS, and vanilla environments are supported. In vanilla, a `topojson` global is exported:
 
 ```html
-<script src="https://d3js.org/topojson.v1.min.js"></script>
+<script src="https://d3js.org/topojson.v2.min.js"></script>
 <script>
 
 var feature = topojson.feature(topology, topology.objects.foo);
@@ -56,9 +56,7 @@ Equivalent to [topojson.merge](#merge), but returns TopoJSON rather than GeoJSON
 
 <a name="mesh" href="#mesh">#</a> topojson.<b>mesh</b>(<i>topology</i>[, <i>object</i>[, <i>filter</i>]]) [<>](https://github.com/topojson/topojson-client/blob/master/src/mesh.js#L4 "Source")
 
-Returns the GeoJSON MultiLineString geometry object representing the mesh for the specified *object* in the given *topology*. This is useful for rendering strokes in complicated objects efficiently, as edges that are shared by multiple features are only stroked once.
-
-If *object* is not specified, a mesh of the entire topology is returned.
+Returns the GeoJSON MultiLineString geometry object representing the mesh for the specified *object* in the given *topology*. This is useful for rendering strokes in complicated objects efficiently, as edges that are shared by multiple features are only stroked once. If *object* is not specified, a mesh of the entire topology is returned.
 
 An optional *filter* function may be specified to prune arcs from the returned mesh using the topology. The filter function is called once for each candidate arc and takes two arguments, *a* and *b*, two geometry objects that share that arc. Each arc is only included in the resulting mesh if the filter function returns true. For typical map topologies the geometries *a* and *b* are adjacent polygons and the candidate arc is their boundary. If an arc is only used by a single geometry then *a* and *b* are identical. This property is useful for separating interior and exterior boundaries; an easy way to produce a mesh of interior boundaries is:
 
@@ -78,9 +76,19 @@ Returns an array representing the set of neighboring objects for each object in 
 
 For a practical example, see the [world map](https://bl.ocks.org/mbostock/4180634) with topological coloring.
 
-<a name="presimplify" href="#presimplify">#</a> topojson.<b>presimplify</b>(<i>topojson</i>[, <i>triangleArea</i>]) [<>](https://github.com/topojson/topojson-client/blob/master/src/presimplify.js "Source")
+### Transforms
 
-… See the [dynamic simplification](https://bl.ocks.org/mbostock/6245977) example.
+<a name="_transform" href="#_transform">#</a> <i>transform</i>(<i>point</i>[, <i>index</i>])
+
+Transforms the specified *point* **in-place**, modifying the *point*’s coordinates. If the specified *index* is truthy, the input *point* is treated as relative to the previous point passed to the transform, as is the case with delta-encoded arcs. Returns the specified *point*.
+
+<a name="transform" href="#transform">#</a> topojson.<b>transform</b>(<i>topology</i>) [<>](https://github.com/topojson/topojson-client/blob/master/src/transform.js "Source")
+
+If the specified *topology*’s [transform object](https://github.com/topojson/topojson-specification/blob/master/README.md#212-transforms) is non-null, returns a [point *transform* function](#_transform) to remove delta-encoding and apply the transform. If the *topology*’s transform object is null, returns the identity function.
+
+<a name="untransform" href="#untransform">#</a> topojson.<b>untransform</b>(<i>topology</i>) [<>](https://github.com/topojson/topojson-client/blob/master/src/untransform.js "Source")
+
+If the specified *topology*’s [transform object](https://github.com/topojson/topojson-specification/blob/master/README.md#212-transforms) is non-null, returns a [point *transform* function](#_transform) to apply delta-encoding and remove the transform. If the *topology*’s transform object is null, returns the identity function.
 
 ## Command Line Reference
 
